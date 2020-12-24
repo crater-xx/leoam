@@ -1,0 +1,16 @@
+{
+  "MyHomePage_title": "Leo-AM",
+  "qrmessage": "Hey this is a QR code. Change this value in the main_screen.dart file.",
+  "loginPage":{
+    "appbar_text": "login",
+    "userNameRequired" : "user name is required",
+    "passwordRequired" : "password is required",
+    "userName": "user name",
+    "userNameOrEmail" : "name or Email",
+    "password": "pass word"
+  },
+  "homePage" : {
+    "goLogin" : "login",
+    "logout": "logout current account"
+  }
+}

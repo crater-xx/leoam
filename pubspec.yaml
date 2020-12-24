@@ -23,8 +23,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
+  fluwx: ^2.5.0+1
+  path_provider: ^1.6.24
+  flutter_tts: ^2.0.0
+  web_socket_channel: ^1.1.0
+  json_serializable: ^3.5.1
+  easy_localization: ^2.3.3
+  qr_flutter: ^3.2.0
+  flutter_sms: ^2.1.1
+  video_player: ^1.0.1
+  provider: ^4.3.2+3
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
@@ -32,7 +40,16 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  fluwx: ^2.5.0+1
+  path_provider: ^1.6.24
+  flutter_tts: ^2.0.0
+  web_socket_channel: ^1.1.0
+  json_serializable: ^3.5.1
+  easy_localization: ^2.3.3
+  qr_flutter: ^3.2.0
+  flutter_sms: ^2.1.1
+  video_player: ^1.0.1
+  provider: ^4.3.2+3
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -74,3 +91,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/graphics/
+    - assets/images/logo_yakka.png
+    - assets/translations/
