@@ -1,0 +1,12 @@
+{
+  "MyHomePage_title": "尼奥大管家",
+  "qrmessage" : "这是二维码，改变这个值在主文件中",
+  "loginPage":{
+    "appbar_text": "登录",
+    "userNameRequired" : "用户名是必须的",
+    "passwordRequired" : "密码是必须的",
+    "userName": "用户名",
+    "userNameOrEmail" : "用户名或邮箱",
+    "password" : "密码"
+  }
+}
