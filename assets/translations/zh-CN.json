@@ -8,5 +8,9 @@
     "userName": "用户名",
     "userNameOrEmail" : "用户名或邮箱",
     "password" : "密码"
+  },
+  "homePage" : {
+    "goLogin" : "登录",
+    "logout": "退出当前账号"
   }
 }

@@ -8,5 +8,9 @@
     "userName": "user name",
     "userNameOrEmail" : "name or Email",
     "password": "pass word"
+  },
+  "homePage" : {
+    "goLogin" : "login",
+    "logout": "logout current account"
   }
 }
