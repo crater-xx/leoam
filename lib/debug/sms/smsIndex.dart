@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -13,18 +14,26 @@ class smsIndex extends StatefulWidget {
 
 class _smsIndexState extends State<smsIndex> {
   static const platform = const MethodChannel('com.shouguan.leoam/sms');
-//  static const EventChannel evnChannel = const EventChannel('com.shouguan.leoax/onNewSMS');
-  List<String> _allSms;
+  static const EventChannel evnChannel =
+      const EventChannel('com.shouguan.leoax/onNewSMS');
+  List<Map<String, dynamic>> _allSms = new List<Map<String, dynamic>>();
   @override
   void initState() {
     super.initState();
-    //   evnChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+    evnChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
     _requestPermission();
     _init();
   }
 
   void _init() async {
-    _allSms = await _getAllSms();
+    List<String> all = await _getAllSms();
+    all.forEach((smsContxt) {
+      Map<String, dynamic> sms = json.decode(smsContxt);
+      _allSms.add(sms);
+    });
+    if (_allSms.length > 0) {
+      setState(() {});
+    }
   }
 
   void _onEvent(Object event) {
@@ -51,17 +60,30 @@ class _smsIndexState extends State<smsIndex> {
   }
 
   Widget _buildListItem(BuildContext context, int index) {
+    Map<String, dynamic> sms = _allSms[index];
     return Card(
         elevation: 5,
-        color: Colors.white30,
-        child: Text("item" + index.toString()));
+        color: Colors.blueGrey,
+        child: Column(
+          children: <Widget>[
+            ListTile(
+                title: Text(
+                  sms["addres"],
+                  style: TextStyle(fontSize: 28),
+                ),
+                subtitle: Text(sms["date"])),
+            Divider(),
+            ListTile(title: Text(sms["body"].toString().substring(0, 30)))
+          ],
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Color(0xffefefef),
-      child: ListView.builder(itemCount: 10, itemBuilder: this._buildListItem),
+      child: ListView.builder(
+          itemCount: _allSms.length, itemBuilder: this._buildListItem),
     );
   }
 }

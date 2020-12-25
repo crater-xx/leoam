@@ -5,6 +5,9 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import java.sql.Date;
@@ -17,6 +20,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.SmsMessage;
+import android.util.EventLog;
 import android.util.Log;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -28,10 +33,13 @@ import org.json.JSONObject;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "com.shouguan.leoam/sms";
+    private static final String EVENT_CHANNEL = "com.shouguan.leoax/onNewSMS";
+    private static final String TAG = "sms plgin";
     final String SMS_URI_ALL = "content://sms/";
     final String SMS_URI_INBOX = "content://sms/inbox";
     final String SMS_URI_SEND = "content://sms/sent";
@@ -51,6 +59,18 @@ public class MainActivity extends FlutterActivity {
                                 result.success(alls);
                             }
                         });
+        new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),EVENT_CHANNEL)
+                .setStreamHandler(new EventChannel.StreamHandler() {
+                    @Override
+                    public void onListen(Object o, EventChannel.EventSink eventSink) {
+                        Log.d(TAG,"add listener");
+                    }
+
+                    @Override
+                    public void onCancel(Object o) {
+                        Log.d(TAG,"cancelling listener");
+                    }
+                });
     }
 
 
