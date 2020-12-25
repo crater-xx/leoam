@@ -25,7 +25,8 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.flutter.app.FlutterActivity;
+import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -41,9 +42,8 @@ public class MainActivity extends FlutterActivity {
     final String SMS_URI_FAILED = "content://sms/failed";
     final String SMS_URI_QUEUED = "content://sms/queued";
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        new MethodChannel(getFlutterView(),CHANNEL).setMethodCallHandler(new MethodCallHandler() {
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL).setMethodCallHandler(new MethodCallHandler() {
             @Override
             public void onMethodCall(@NonNull MethodCall methodCall, @NonNull Result result) {
                 switch (methodCall.method) {
@@ -61,7 +61,7 @@ public class MainActivity extends FlutterActivity {
 
     @SuppressLint("LongLogTag")
     public ArrayList<String> getAllSms() {
-        ArrayList<String>  all = new ArrayList();
+        ArrayList<String>  all = new ArrayList<String>();
         try {
             Uri uri = Uri.parse(SMS_URI_ALL);
             String[] projection = new String[] { "_id", "address", "person", "body", "date", "type","read","status" };

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 /// This is the screen that you'll see when the app starts
 class smsIndex extends StatefulWidget {
@@ -12,13 +13,13 @@ class smsIndex extends StatefulWidget {
 
 class _smsIndexState extends State<smsIndex> {
   static const platform = const MethodChannel('com.shouguan.leoam/sms');
-  static const EventChannel evnChannel =
-      const EventChannel('com.shouguan.leoax/onNewSMS');
+//  static const EventChannel evnChannel = const EventChannel('com.shouguan.leoax/onNewSMS');
   List<String> _allSms;
   @override
   void initState() {
     super.initState();
-    evnChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+    //   evnChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+    _requestPermission();
     _init();
   }
 
@@ -32,6 +33,16 @@ class _smsIndexState extends State<smsIndex> {
 
   void _onError(Object error) {
     print('onerror');
+  }
+
+  void _requestPermission() async {
+    await [Permission.sms].request();
+    if (await Permission.sms.isDenied) {
+      print("sms isdenied");
+    }
+    if (await Permission.sms.isGranted) {
+      print("sms agree");
+    }
   }
 
   Future<List<String>> _getAllSms() async {
