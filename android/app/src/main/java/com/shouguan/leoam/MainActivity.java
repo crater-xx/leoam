@@ -8,7 +8,9 @@ import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -26,6 +28,7 @@ import android.util.Log;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.telephony.SmsMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +42,9 @@ import io.flutter.plugin.common.MethodChannel;
 public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "com.shouguan.leoam/sms";
     private static final String EVENT_CHANNEL = "com.shouguan.leoax/onNewSMS";
+    private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
     private static final String TAG = "sms plgin";
+    private BroadcastReceiver smsReceiver;
     final String SMS_URI_ALL = "content://sms/";
     final String SMS_URI_INBOX = "content://sms/inbox";
     final String SMS_URI_SEND = "content://sms/sent";
@@ -62,15 +67,53 @@ public class MainActivity extends FlutterActivity {
         new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),EVENT_CHANNEL)
                 .setStreamHandler(new EventChannel.StreamHandler() {
                     @Override
-                    public void onListen(Object o, EventChannel.EventSink eventSink) {
+                    public void onListen(Object arguments, EventChannel.EventSink eventSink) {
                         Log.d(TAG,"add listener");
+                        smsReceiver = createChargingStateChangeReceiver(eventSink);
+                        registerReceiver(smsReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
                     }
 
                     @Override
-                    public void onCancel(Object o) {
+                    public void onCancel(Object arguments) {
                         Log.d(TAG,"cancelling listener");
+                        unregisterReceiver(smsReceiver);
+                        smsReceiver = null;
                     }
                 });
+    }
+
+    private BroadcastReceiver createChargingStateChangeReceiver(final EventChannel.EventSink events) {
+        return new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent != null && SMS_RECEIVED.equals(intent.getAction()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    final Bundle pudsBundle = intent.getExtras();
+                    final Object[] pdus = (Object[]) pudsBundle.get("pdus");
+                    SmsMessage[] msgs = new SmsMessage[pdus.length];
+                    ArrayList<String>  all = new ArrayList<String>();
+                    String format = intent.getStringExtra("format");
+                    for (int i=0;i<pdus.length; i++) {
+                        msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i],format);
+                        try{
+                            JSONObject sms = new JSONObject();
+                            sms.put("sender",msgs[i].getDisplayOriginatingAddress());
+                            sms.put("person",msgs[i].getMessageBody());
+                            sms.put("body",msgs[i].getDisplayMessageBody());
+                            long date=msgs[i].getTimestampMillis();
+                            Date timeDate=new Date(date);
+                            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String time=simpleDateFormat.format(timeDate);
+                            sms.put("date",time);
+                            sms.put("status",msgs[i].getStatus());
+                            all.add(sms.toString());
+                        } catch (JSONException ex){
+                            Log.d("add sms",ex.getMessage());
+                        }
+                    }
+                    events.success(all);
+                }
+            }
+        };
     }
 
 
