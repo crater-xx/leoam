@@ -45,9 +45,9 @@ class _smsIndexState extends State<smsIndex> {
     }
   }
 
-  Future<List<String>> _getAllSms() async {
-    List<String> all = await platform.invokeMethod('getAllSms');
-    return all;
+  Future<List<dynamic>> _getAllSms() async {
+    List<dynamic> all = await platform.invokeMethod('getAllSms');
+    return all.cast<String>();
   }
 
   Widget _buildListItem(BuildContext context, int index) {

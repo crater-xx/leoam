@@ -25,12 +25,10 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
 
 public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "com.shouguan.leoam/sms";
@@ -42,22 +40,20 @@ public class MainActivity extends FlutterActivity {
     final String SMS_URI_FAILED = "content://sms/failed";
     final String SMS_URI_QUEUED = "content://sms/queued";
 
+    @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),CHANNEL).setMethodCallHandler(new MethodCallHandler() {
-            @Override
-            public void onMethodCall(@NonNull MethodCall methodCall, @NonNull Result result) {
-                switch (methodCall.method) {
-                    case "getAllSms":   // 跳转原生页面
-                        ArrayList<String> alls = getAllSms();
-                        result.success(alls);
-                        break;
-                    default:
-                        result.notImplemented();
-                        break;
-                }
-            }
-        });
+        super.configureFlutterEngine(flutterEngine);
+        new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
+                .setMethodCallHandler(
+                        (call, result) -> {
+                            if (call.method.equals("getAllSms")) {
+                                ArrayList<String> alls = getAllSms();
+                                result.success(alls);
+                            }
+                        });
     }
+
+
 
     @SuppressLint("LongLogTag")
     public ArrayList<String> getAllSms() {
@@ -73,7 +69,8 @@ public class MainActivity extends FlutterActivity {
                 int index_Body = cur.getColumnIndex("body");
                 int index_Date = cur.getColumnIndex("date");
                 int index_Type = cur.getColumnIndex("type");
-
+                int index_Read = cur.getColumnIndex("read");
+                int index_Status = cur.getColumnIndex("status");
                 do {
 
                     String strAddress = cur.getString(index_Address);
@@ -81,6 +78,8 @@ public class MainActivity extends FlutterActivity {
                     String strbody = cur.getString(index_Body);
                     long longDate = cur.getLong(index_Date);
                     int intType = cur.getInt(index_Type);
+                    int intRead = cur.getInt(index_Read);
+                    int intStatus = cur.getInt(index_Status);
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                     Date d = new Date(longDate);
@@ -97,6 +96,12 @@ public class MainActivity extends FlutterActivity {
                     try{
                         JSONObject sms = new JSONObject();
                         sms.put("addres",strAddress);
+                        sms.put("person",intPerson);
+                        sms.put("body",strbody);
+                        sms.put("date",strDate);
+                        sms.put("type",strType);
+                        sms.put("read",intRead);
+                        sms.put("status",intStatus);
 
                         all.add(sms.toString());
                     } catch (JSONException ex){
