@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:leoam/common/TTSUtil.dart';
 
 /// This is the screen that you'll see when the app starts
 class smsIndex extends StatefulWidget {
@@ -16,6 +17,7 @@ class _smsIndexState extends State<smsIndex> {
   static const platform = const MethodChannel('com.shouguan.leoam/sms');
   static const EventChannel evnChannel =
       const EventChannel('com.shouguan.leoax/onNewSMS');
+  final TTSUtil _tts = new TTSUtil();
   List<Map<String, dynamic>> _allSms = new List<Map<String, dynamic>>();
   @override
   void initState() {
@@ -23,6 +25,7 @@ class _smsIndexState extends State<smsIndex> {
     evnChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
     _requestPermission();
     _init();
+    _tts.initTTS();
   }
 
   void _init() async {
@@ -59,6 +62,10 @@ class _smsIndexState extends State<smsIndex> {
     return all.cast<String>();
   }
 
+  void speekSms(String text) {
+    _tts.speak(text);
+  }
+
   Widget _buildListItem(BuildContext context, int index) {
     Map<String, dynamic> sms = _allSms[index];
     return Card(
@@ -73,7 +80,12 @@ class _smsIndexState extends State<smsIndex> {
                 ),
                 subtitle: Text(sms["date"])),
             Divider(),
-            ListTile(title: Text(sms["body"].toString().substring(0, 30)))
+            ListTile(title: Text(sms["body"].toString().substring(0, 30))),
+            RaisedButton(
+                child: Text("Play"),
+                onPressed: () {
+                  speekSms(sms["body"]);
+                }),
           ],
         ));
   }
