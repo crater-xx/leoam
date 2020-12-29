@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:location/location.dart' as FlutterLocation;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:amap_search_fluttify/amap_search_fluttify.dart';
 import 'package:amap_location_fluttify/amap_location_fluttify.dart';
@@ -26,26 +25,6 @@ class _locationState extends State<locationTest> {
   ReGeocode _reGeocode;
 
   final FlutterLocation.Location _mylocation = FlutterLocation.Location();
-
-  FlutterLocation.LocationData _location;
-  String _error;
-
-  Future<void> _getLocation() async {
-    setState(() {
-      _error = null;
-    });
-    try {
-      final FlutterLocation.LocationData _locationResult =
-          await _mylocation.getLocation();
-      setState(() {
-        _location = _locationResult;
-      });
-    } on PlatformException catch (err) {
-      setState(() {
-        _error = err.code;
-      });
-    }
-  }
 
   void initState() {
     _requestPermission();
@@ -119,6 +98,17 @@ class _locationState extends State<locationTest> {
                 setState(() {
                   _latController.text = location.latLng.latitude.toString();
                   _lngController.text = location.latLng.longitude.toString();
+                });
+              },
+            ),
+            RaisedButton(
+              child: Text('Flutter定位'),
+              onPressed: () async {
+                final FlutterLocation.LocationData location =
+                    await _mylocation.getLocation();
+                setState(() {
+                  _latController.text = location.latitude.toString();
+                  _lngController.text = location.longitude.toString();
                 });
               },
             ),
