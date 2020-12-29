@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:location/location.dart' as FlutterLocation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:amap_search_fluttify/amap_search_fluttify.dart';
+import 'package:amap_location_fluttify/amap_location_fluttify.dart';
 
 /// This is the screen that you'll see when the app starts
-class location extends StatefulWidget {
-  location({Key key, this.title}) : super(key: key);
+class locationTest extends StatefulWidget {
+  locationTest({Key key, this.title}) : super(key: key);
   final String title;
   @override
   _locationState createState() => _locationState();
 }
 
-class _locationState extends State<location> {
+class _locationState extends State<locationTest> {
   final _latController = TextEditingController(text: '39.9824');
   final _lngController = TextEditingController(text: '116.3053');
   final _radiusController = TextEditingController(text: '200.0');
@@ -23,15 +25,49 @@ class _locationState extends State<location> {
 
   ReGeocode _reGeocode;
 
+  final FlutterLocation.Location _mylocation = FlutterLocation.Location();
+
+  FlutterLocation.LocationData _location;
+  String _error;
+
+  Future<void> _getLocation() async {
+    setState(() {
+      _error = null;
+    });
+    try {
+      final FlutterLocation.LocationData _locationResult =
+          await _mylocation.getLocation();
+      setState(() {
+        _location = _locationResult;
+      });
+    } on PlatformException catch (err) {
+      setState(() {
+        _error = err.code;
+      });
+    }
+  }
+
   void initState() {
+    _requestPermission();
     _init();
   }
 
   void _init() async {
     if (Platform.isIOS) {
       await AmapCore.init('dfbff67ce9be68b97f1c198e2c3c9fa1');
-    } else if (Platform.isAndroid) {
-      await AmapCore.init('d2c9012bb9941114039d9fbd9f869d41');
+      AmapLocation.instance.init(iosKey: 'dfbff67ce9be68b97f1c198e2c3c9fa1');
+    } else {
+      AmapLocation.instance.init();
+    }
+  }
+
+  void _requestPermission() async {
+    await [Permission.location].request();
+    if (await Permission.location.isDenied) {
+      print("location isdenied");
+    }
+    if (await Permission.location.isGranted) {
+      print("location agree");
     }
   }
 
@@ -74,6 +110,17 @@ class _locationState extends State<location> {
                 });
               },
               child: Text('搜索'),
+            ),
+            RaisedButton(
+              child: Text('获取单次定位'),
+              onPressed: () async {
+                final location = await AmapLocation.instance
+                    .fetchLocation(needAddress: true);
+                setState(() {
+                  _latController.text = location.latLng.latitude.toString();
+                  _lngController.text = location.latLng.longitude.toString();
+                });
+              },
             ),
             Expanded(
               child: SingleChildScrollView(

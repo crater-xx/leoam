@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:leoam/debug/qrcode/qrcode.dart';
 import 'package:leoam/debug/tts/ttstest.dart';
 import 'package:leoam/debug/sms/smsIndex.dart';
-import 'package:leoam/debug/location/location.dart';
+import 'package:leoam/debug/location/locationTest.dart';
 import 'package:leoam/module/login/loginPage.dart';
 import 'package:leoam/common/global.dart';
 import 'package:leoam/module/tabsPage.dart';
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
           '/debug/tts': (BuildContext context) => TTSTest(title: 'ttsTest'),
           '/debug/sms': (BuildContext context) => smsIndex(title: 'smsindex'),
           '/debug/location': (BuildContext context) =>
-              location(title: 'location'),
+              locationTest(title: 'location'),
           '/login': (BuildContext content) => LoginPage(title: 'login'),
         },
         initialRoute: "/debug/location",
