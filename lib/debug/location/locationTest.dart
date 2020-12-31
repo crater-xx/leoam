@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:location/location.dart' as FlutterLocation;
+import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:amap_search_fluttify/amap_search_fluttify.dart';
-import 'package:amap_location_fluttify/amap_location_fluttify.dart';
+import 'package:leoam/common/LocationManager.dart';
 
 /// This is the screen that you'll see when the app starts
 class locationTest extends StatefulWidget {
@@ -21,33 +19,11 @@ class _locationState extends State<locationTest> {
   final _radiusController = TextEditingController(text: '200.0');
   final _keywordController = TextEditingController(text: '杭州');
   String _district = '';
-
-  ReGeocode _reGeocode;
-
-  final FlutterLocation.Location _mylocation = FlutterLocation.Location();
+  String _reGeocode;
+  final LocationManager _locationMgr = LocationManager.getInstance();
 
   void initState() {
-    _requestPermission();
-    _init();
-  }
-
-  void _init() async {
-    if (Platform.isIOS) {
-      await AmapCore.init('dfbff67ce9be68b97f1c198e2c3c9fa1');
-      AmapLocation.instance.init(iosKey: 'dfbff67ce9be68b97f1c198e2c3c9fa1');
-    } else {
-      AmapLocation.instance.init();
-    }
-  }
-
-  void _requestPermission() async {
-    await [Permission.location].request();
-    if (await Permission.location.isDenied) {
-      print("location isdenied");
-    }
-    if (await Permission.location.isGranted) {
-      print("location agree");
-    }
+    _locationMgr.init();
   }
 
   @override
@@ -77,13 +53,8 @@ class _locationState extends State<locationTest> {
             ),
             RaisedButton(
               onPressed: () async {
-                final reGeocodeList = await AmapSearch.instance.searchReGeocode(
-                  LatLng(
-                    double.parse(_latController.text),
-                    double.parse(_lngController.text),
-                  ),
-                  radius: 200.0,
-                );
+                final reGeocodeList = await _locationMgr.getAddressByLocation(
+                    lat: 20.0, lng: 10.0, ra: 20.0);
                 setState(() {
                   _reGeocode = reGeocodeList;
                 });
