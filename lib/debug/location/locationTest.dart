@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:leoam/common/LocationManager.dart';
+import 'package:leoam/common/TTSUtil.dart';
+import 'package:location/location.dart' as FlutterLocation;
 
 /// This is the screen that you'll see when the app starts
 class locationTest extends StatefulWidget {
@@ -16,14 +18,16 @@ class locationTest extends StatefulWidget {
 class _locationState extends State<locationTest> {
   final _latController = TextEditingController(text: '39.9824');
   final _lngController = TextEditingController(text: '116.3053');
-  final _radiusController = TextEditingController(text: '200.0');
+  final _radiusController = TextEditingController(text: '5.0');
   final _keywordController = TextEditingController(text: '杭州');
   String _district = '';
   String _reGeocode;
   final LocationManager _locationMgr = LocationManager.getInstance();
+  final TTSUtil _tts = TTSUtil();
 
   void initState() {
     _locationMgr.init();
+    _tts.initTTS();
   }
 
   @override
@@ -54,9 +58,14 @@ class _locationState extends State<locationTest> {
             RaisedButton(
               onPressed: () async {
                 final reGeocodeList = await _locationMgr.getAddressByLocation(
-                    lat: 20.0, lng: 10.0, ra: 20.0);
+                    double.parse(_latController.text.toString()),
+                    double.parse(_lngController.text.toString()),
+                    double.parse(_radiusController.text.toString()));
+
                 setState(() {
-                  _reGeocode = reGeocodeList;
+                  _locationMgr.addAoi(reGeocodeList);
+                  _reGeocode = _locationMgr.currentGeocode.toString();
+                  _tts.speak(_locationMgr.currentGeocode.formatAddress);
                 });
               },
               child: Text('搜索'),
@@ -64,8 +73,7 @@ class _locationState extends State<locationTest> {
             RaisedButton(
               child: Text('获取单次定位'),
               onPressed: () async {
-                final location = await AmapLocation.instance
-                    .fetchLocation(needAddress: true);
+                final location = await _locationMgr.fetchLocation();
                 setState(() {
                   _latController.text = location.latLng.latitude.toString();
                   _lngController.text = location.latLng.longitude.toString();
@@ -76,7 +84,7 @@ class _locationState extends State<locationTest> {
               child: Text('Flutter定位'),
               onPressed: () async {
                 final FlutterLocation.LocationData location =
-                    await _mylocation.getLocation();
+                    await _locationMgr.getLocation();
                 setState(() {
                   _latController.text = location.latitude.toString();
                   _lngController.text = location.longitude.toString();
@@ -101,8 +109,8 @@ class _locationState extends State<locationTest> {
             ),
             RaisedButton(
               onPressed: () async {
-                final district = await AmapSearch.instance
-                    .searchDistrict(_keywordController.text);
+                final district =
+                    await _locationMgr.searchDistrict(_keywordController.text);
                 _district = await district.toString();
                 setState(() {});
               },

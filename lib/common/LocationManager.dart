@@ -3,12 +3,16 @@ import 'package:amap_search_fluttify/amap_search_fluttify.dart';
 import 'package:amap_location_fluttify/amap_location_fluttify.dart';
 import 'dart:io';
 import 'package:location/location.dart' as FlutterLocation;
+import 'package:logger/logger.dart';
 
 //定位管理类
 class LocationManager {
   static LocationManager _instance;
 
   final FlutterLocation.Location _mylocation = FlutterLocation.Location();
+  simpleGeocode _crrentGeocode; //当前aoi
+  final List<simpleGeocode> _allAoi = List<simpleGeocode>(); //
+  final Logger _logger = Logger();
 
   LocationManager._internal();
 
@@ -53,10 +57,60 @@ class LocationManager {
     return ld;
   }
 
-  Future<String> getAddressByLocation(double lat, double lng, double ra) async {
+  Future<ReGeocode> getAddressByLocation(
+      double lat, double lng, double ra) async {
     ReGeocode rg =
         await AmapSearch.instance.searchReGeocode(LatLng(lat, lng), radius: ra);
-    String addres = rg.toString();
-    return addres;
+    return rg;
   }
+
+  Future<String> searchDistrict(String addr) async {
+    final District d = await AmapSearch.instance.searchDistrict(addr);
+    return d.toString();
+  }
+
+  //
+  void addAoi(ReGeocode geocode) {
+    if (geocode.aoiList.length > 0 &&
+        (_crrentGeocode == null ||
+            _crrentGeocode.id != geocode.aoiList[0].id)) {
+      _crrentGeocode = simpleGeocode(geocode);
+      _allAoi.add(_crrentGeocode);
+      _logger.d('new Geocode :' + _crrentGeocode.toString());
+    }
+  }
+
+  simpleGeocode get currentGeocode => _crrentGeocode;
 } //class end
+
+//simpleGeocode
+class simpleGeocode extends Aoi {
+  DateTime _dt;
+  String provinceName;
+  String cityName;
+  String districtName;
+  String township;
+  String building;
+  String country;
+  String formatAddress;
+  simpleGeocode(ReGeocode geocode)
+      : super(
+            adcode: geocode.aoiList[0].adcode,
+            area: geocode.aoiList[0].area,
+            id: geocode.aoiList[0].id,
+            name: geocode.aoiList[0].name,
+            centerPoint: geocode.aoiList[0].centerPoint) {
+    _dt = new DateTime.now();
+    provinceName = geocode.provinceName;
+    cityName = geocode.cityName;
+    districtName = geocode.districtName;
+    township = geocode.township;
+    country = geocode.country;
+    building = geocode.building;
+    formatAddress = geocode.formatAddress;
+  }
+  @override
+  String toString() {
+    return 'id: $id , address: $formatAddress ,datetime:' + _dt.toString();
+  }
+}
