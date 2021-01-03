@@ -1,18 +1,21 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:amap_search_fluttify/amap_search_fluttify.dart';
 import 'package:amap_location_fluttify/amap_location_fluttify.dart';
-import 'dart:io';
 import 'package:location/location.dart' as FlutterLocation;
 import 'package:logger/logger.dart';
 
 //定位管理类
-class LocationManager {
+class LocationManager with ChangeNotifier {
   static LocationManager _instance;
 
   final FlutterLocation.Location _mylocation = FlutterLocation.Location();
   simpleGeocode _crrentGeocode; //当前aoi
   final List<simpleGeocode> _allAoi = List<simpleGeocode>(); //
   final Logger _logger = Logger();
+  double _testLatitude;
+  double _testLongitude;
 
   LocationManager._internal();
 
@@ -35,6 +38,11 @@ class LocationManager {
     }
   }
 
+  void setDebug(double lat, double lng) {
+    _testLatitude = lat;
+    _testLongitude = lng;
+  }
+
   //请求权限
   void _requestPermission() async {
     await [Permission.location].request();
@@ -52,9 +60,22 @@ class LocationManager {
     return l;
   }
 
-  Future<FlutterLocation.LocationData> getLocation() async {
-    FlutterLocation.LocationData ld = await _mylocation.getLocation();
-    return ld;
+  Future<FlutterLocation.LocationData> getQuickLocation() async {
+    if (_testLongitude != null) {
+      _testLongitude -= 0.001;
+      return FlutterLocation.LocationData.fromMap({
+        'latitude': _testLatitude,
+        'longitude': _testLongitude,
+        'accuracy': 0,
+        'altitude': 0,
+        'speed': 1,
+        'speed_accuracy': 1,
+        'heading': 0,
+        'time': 0,
+      });
+    }
+    FlutterLocation.LocationData fld = await _mylocation.getLocation();
+    return fld;
   }
 
   Future<ReGeocode> getAddressByLocation(
@@ -70,14 +91,24 @@ class LocationManager {
   }
 
   //
-  void addAoi(ReGeocode geocode) {
+  bool addAoi(ReGeocode geocode) {
     if (geocode.aoiList.length > 0 &&
         (_crrentGeocode == null ||
             _crrentGeocode.id != geocode.aoiList[0].id)) {
       _crrentGeocode = simpleGeocode(geocode);
       _allAoi.add(_crrentGeocode);
       _logger.d('new Geocode :' + _crrentGeocode.toString());
+      notifyListeners();
+      return true;
     }
+    return false;
+  }
+
+  //检测位置变化
+  void checkLocation(double ra) async {
+    FlutterLocation.LocationData ld = await getQuickLocation();
+    ReGeocode rg = await getAddressByLocation(ld.latitude, ld.longitude, ra);
+    addAoi(rg);
   }
 
   simpleGeocode get currentGeocode => _crrentGeocode;

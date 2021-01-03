@@ -37,6 +37,15 @@ class _TabsPageState extends State<TabsPage> {
     super.initState();
     // 自动填充上次登录的用户名，填充后将焦点定位到密码输入框
     Global.profile.LoadWeixinAuth();
+    Global.tts.initTTS();
+    Global.locationMgr.init();
+    Global.locationMgr.setDebug(31.247368, 121.469203);
+    Global.startTimeout();
+  }
+
+  void dispose() {
+    Global.stopTimeout();
+    super.dispose();
   }
 
   @override

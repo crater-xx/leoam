@@ -22,7 +22,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => Global.profile)],
+      providers: [
+        ChangeNotifierProvider(create: (_) => Global.locationMgr),
+        ChangeNotifierProvider(create: (_) => Global.profile)
+      ],
       child: MaterialApp(
         title: 'Leo-AM',
         locale: context.locale,
@@ -53,7 +56,7 @@ class MyApp extends StatelessWidget {
               locationTest(title: 'location'),
           '/login': (BuildContext content) => LoginPage(title: 'login'),
         },
-        initialRoute: "/debug/location",
+        initialRoute: "/",
         home: TabsPage(title: tr("MyHomePage_title")),
       ),
     );

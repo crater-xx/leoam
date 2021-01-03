@@ -70,4 +70,11 @@ class UserModel with ChangeNotifier {
       print("load weixin auth error");
     }
   }
+
+  void timerHandler() {
+    if (_Logined) {
+      //已经登录了
+
+    }
+  }
 }

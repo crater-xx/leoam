@@ -84,7 +84,7 @@ class _locationState extends State<locationTest> {
               child: Text('Flutter定位'),
               onPressed: () async {
                 final FlutterLocation.LocationData location =
-                    await _locationMgr.getLocation();
+                    await _locationMgr.getQuickLocation();
                 setState(() {
                   _latController.text = location.latitude.toString();
                   _lngController.text = location.longitude.toString();

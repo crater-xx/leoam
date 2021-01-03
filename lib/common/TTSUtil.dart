@@ -1,4 +1,5 @@
 import 'package:flutter_tts/flutter_tts.dart';
+import 'dart:io';
 
 enum ttsStatus { playing, stopped, paused, free }
 
@@ -12,6 +13,8 @@ class TTSUtil {
     return _manager;
   }
   FlutterTts flutterTts;
+  //播放队列
+  List<String> _playQueue = List<String>();
 
   ttsStatus _status = ttsStatus.free;
 
@@ -24,18 +27,28 @@ class TTSUtil {
 
   initTTS() {
     flutterTts = FlutterTts();
+    if (Platform.isIOS) {
+      /// 设置音量
+      flutterTts.setVolume(0.8);
+
+      /// 设置语速
+      flutterTts.setSpeechRate(0.4);
+
+      /// 音调
+      flutterTts.setPitch(1.0);
+    } else {
+      /// 设置音量
+      flutterTts.setVolume(0.8);
+
+      /// 设置语速
+      flutterTts.setSpeechRate(0.8);
+
+      /// 音调
+      flutterTts.setPitch(1.1);
+    }
 
     /// 设置语言
     flutterTts.setLanguage("zh-CN");
-
-    /// 设置音量
-    flutterTts.setVolume(0.8);
-
-    /// 设置语速
-    flutterTts.setSpeechRate(0.8);
-
-    /// 音调
-    flutterTts.setPitch(1.1);
 
     flutterTts.setCancelHandler(() {
       _status = ttsStatus.free;
@@ -52,6 +65,20 @@ class TTSUtil {
     flutterTts.setContinueHandler(() {
       _status = ttsStatus.playing;
     });
+  }
+
+  //更新播放队列
+  void update() {
+    if (_status == ttsStatus.free) {
+      if (_playQueue.length > 0) {
+        String text = _playQueue.removeAt(0);
+        speak(text);
+      }
+    }
+  }
+
+  void addPlayQueue(String text) {
+    _playQueue.add(text);
   }
 
   Future speak(String text) async {
