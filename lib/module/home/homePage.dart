@@ -35,9 +35,14 @@ class CurrentLocationState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LocationManager lm = context.watch<LocationManager>();
-    String addr =
-        lm.currentGeocode == null ? '未知' : lm.currentGeocode.formatAddress;
-    Global.tts.addPlayQueue(addr);
+    String addr;
+    if (lm.currentGeocode != null) {
+      addr = lm.currentGeocode.formatAddress;
+      Global.tts.addPlayQueue(addr);
+    } else {
+      addr = "还在定位中";
+    }
+
     return Text(addr);
   }
 }
