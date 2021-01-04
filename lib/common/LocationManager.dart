@@ -92,9 +92,10 @@ class LocationManager with ChangeNotifier {
 
   //
   bool addAoi(ReGeocode geocode) {
-    if (geocode.aoiList.length > 0 &&
-        (_crrentGeocode == null ||
-            _crrentGeocode.id != geocode.aoiList[0].id)) {
+    if (_crrentGeocode == null ||
+        (geocode.aoiList.length > 0 &&
+            _crrentGeocode.id != geocode.aoiList[0].id) ||
+        geocode.townCode != _crrentGeocode.id) {
       _crrentGeocode = simpleGeocode(geocode);
       _allAoi.add(_crrentGeocode);
       _logger.d('new Geocode :' + _crrentGeocode.toString());
@@ -115,7 +116,7 @@ class LocationManager with ChangeNotifier {
 } //class end
 
 //simpleGeocode
-class simpleGeocode extends Aoi {
+class simpleGeocode {
   DateTime _dt;
   String provinceName;
   String cityName;
@@ -124,13 +125,12 @@ class simpleGeocode extends Aoi {
   String building;
   String country;
   String formatAddress;
-  simpleGeocode(ReGeocode geocode)
-      : super(
-            adcode: geocode.aoiList[0].adcode,
-            area: geocode.aoiList[0].area,
-            id: geocode.aoiList[0].id,
-            name: geocode.aoiList[0].name,
-            centerPoint: geocode.aoiList[0].centerPoint) {
+  String adcode;
+  double area;
+  String id;
+  String name;
+  LatLng centerPoint;
+  simpleGeocode(ReGeocode geocode) {
     _dt = new DateTime.now();
     provinceName = geocode.provinceName;
     cityName = geocode.cityName;
@@ -139,6 +139,15 @@ class simpleGeocode extends Aoi {
     country = geocode.country;
     building = geocode.building;
     formatAddress = geocode.formatAddress;
+    if (geocode.aoiList.length > 0) {
+      id = geocode.aoiList[0].id;
+      adcode = geocode.aoiList[0].adcode;
+      area = geocode.aoiList[0].area;
+      name = geocode.aoiList[0].name;
+      centerPoint = geocode.aoiList[0].centerPoint;
+    } else {
+      id = geocode.townCode;
+    }
   }
   @override
   String toString() {

@@ -39,7 +39,7 @@ class _TabsPageState extends State<TabsPage> {
     Global.profile.LoadWeixinAuth();
     Global.tts.initTTS();
     Global.locationMgr.init();
-    Global.locationMgr.setDebug(31.247368, 121.469203);
+    //  Global.locationMgr.setDebug(31.247368, 121.469203);
     Global.startTimeout();
   }
 
