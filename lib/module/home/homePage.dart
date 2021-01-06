@@ -16,16 +16,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: CurrentLocationState(),
-      ),
-      body: const Center(
-        child: Text(
-          'This is the next page',
-          style: TextStyle(fontSize: 24),
+        appBar: AppBar(
+          title: CurrentLocationState(),
         ),
-      ),
-    );
+        body: CurrentLocationInfoState());
   }
 }
 
@@ -42,8 +36,31 @@ class CurrentLocationState extends StatelessWidget {
     } else {
       addr = "还在定位中";
     }
-
     return Text(addr);
+  }
+}
+
+class CurrentLocationInfoState extends StatelessWidget {
+  const CurrentLocationInfoState({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    LocationManager lm = context.watch<LocationManager>();
+    return Center(
+      child: Card(
+        child: InkWell(
+          splashColor: Colors.blue.withAlpha(30),
+          onTap: () {
+            print('Card tapped.');
+          },
+          child: Container(
+            width: 300,
+            height: 100,
+            child: Text(lm.currentLocation.toString()),
+          ),
+        ),
+      ),
+    );
   }
 }
 

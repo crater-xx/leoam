@@ -12,6 +12,7 @@ class LocationManager with ChangeNotifier {
 
   final FlutterLocation.Location _mylocation = FlutterLocation.Location();
   simpleGeocode _crrentGeocode; //当前aoi
+  FlutterLocation.LocationData _currentLocation;
   final List<simpleGeocode> _allAoi = List<simpleGeocode>(); //
   final Logger _logger = Logger();
   double _testLatitude;
@@ -107,12 +108,14 @@ class LocationManager with ChangeNotifier {
 
   //检测位置变化
   void checkLocation(double ra) async {
-    FlutterLocation.LocationData ld = await getQuickLocation();
-    ReGeocode rg = await getAddressByLocation(ld.latitude, ld.longitude, ra);
+    _currentLocation = await getQuickLocation();
+    ReGeocode rg = await getAddressByLocation(
+        _currentLocation.latitude, _currentLocation.longitude, ra);
     addAoi(rg);
   }
 
   simpleGeocode get currentGeocode => _crrentGeocode;
+  FlutterLocation.LocationData get currentLocation => _currentLocation;
 } //class end
 
 //simpleGeocode

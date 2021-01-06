@@ -24,7 +24,7 @@ class Global {
 
   //启动定时器
   static void startTimeout() {
-    _timer10 = Timer.periodic(Duration(seconds: 15), timer10Seconds);
+    _timer10 = Timer.periodic(Duration(seconds: 10), timer10Seconds);
     _timer1 = Timer.periodic(Duration(seconds: 1), timer1Seconds);
   }
 
