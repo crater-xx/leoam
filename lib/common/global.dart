@@ -2,6 +2,7 @@ import 'dart:async';
 import 'UserModel.dart';
 import 'LocationManager.dart';
 import 'TTSUtil.dart';
+import 'NetManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Global {
@@ -12,6 +13,7 @@ class Global {
   static UserModel profile = UserModel();
   static TTSUtil tts = TTSUtil();
   static LocationManager locationMgr = LocationManager.getInstance();
+  static NetManager netMgr = NetManager.getInstance();
   //1.微信登录
   static String _wexintoken;
   //2.钉钉登录
