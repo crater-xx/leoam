@@ -11,6 +11,20 @@ class NetManager with ChangeNotifier {
   final WebSocketUtility _websocket = WebSocketUtility();
 
   factory NetManager.getInstance() => _getInstance();
+  //connect gate way
+  bool conntectGate(String url) {
+    _websocket.startConnect(url);
+  }
+
+  void disconnectGate() {
+    _websocket.closeSocket();
+  }
+
+  void gateOpen(){
+
+  }
+
+  void onGateMessage
 
   static _getInstance() {
     if (_instance == null) {

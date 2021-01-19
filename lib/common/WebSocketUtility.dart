@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-
 /// WebSocket状态
 enum SocketStatus {
   SocketStatusConnected, // 已连接
@@ -11,7 +10,6 @@ enum SocketStatus {
 }
 
 class WebSocketUtility {
-
   IOWebSocketChannel _webSocket; // WebSocket
   SocketStatus _socketStatus; // socket状态
   Timer _heartBeat; // 心跳定时器
@@ -24,14 +22,15 @@ class WebSocketUtility {
   Function onMessage; // 接收消息回调
   /// WebSocket地址
   String _SOCKET_URL = 'ws://121.40.165.18:8800';
+
   /// 初始化WebSocket
-   WebSocketUtility({Function onOpen, Function onMessage, Function onError}) {
+  WebSocketUtility({Function onOpen, Function onMessage, Function onError}) {
     this.onOpen = onOpen;
     this.onMessage = onMessage;
     this.onError = onError;
   }
 
-  void startConnect(String url){
+  void startConnect(String url) {
     _SOCKET_URL = url;
     openSocket();
   }
@@ -51,7 +50,7 @@ class WebSocketUtility {
     onOpen();
     // 接收消息
     _webSocket.stream.listen((data) => webSocketOnMessage(data),
-        onError: webSocketOnError, onDone:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    );
+        onError: webSocketOnError, onDone: webSocketOnDone);
   }
 
   /// WebSocket接收消息回调
@@ -60,7 +59,7 @@ class WebSocketUtility {
   }
 
   /// WebSocket关闭连接回调
-  webSocketOnDone() {
+  void webSocketOnDone() {
     print('closed');
     reconnect();
   }
