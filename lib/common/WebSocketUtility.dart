@@ -47,7 +47,7 @@ class WebSocketUtility {
       _reconnectTimer.cancel();
       _reconnectTimer = null;
     }
-    onOpen();
+    onOpen(_webSocket);
     // 接收消息
     _webSocket.stream.listen((data) => webSocketOnMessage(data),
         onError: webSocketOnError, onDone: webSocketOnDone);

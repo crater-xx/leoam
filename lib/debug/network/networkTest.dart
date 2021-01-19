@@ -16,7 +16,7 @@ class networkTest extends StatefulWidget {
 class _networkTestState extends State<networkTest> {
   void initState() {
     super.initState();
-    Global.netMgr.conntectGate("ws:202.11.11.22:80");
+    Global.netMgr.conntectGate("wss://socket.idcd.com:1443");
   }
 
   void dispose() {
@@ -36,7 +36,7 @@ class _networkTestState extends State<networkTest> {
         TextField(
           controller: _msgController,
           onSubmitted: (String value) async {
-            _logger.d(value);
+            Global.netMgr.sendMsgToGate(value);
           },
         )
       ],
