@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart';
 import 'package:web_socket_channel/io.dart';
 import 'WebSocketUtility.dart';
+import 'package:leoam/common/global.dart';
 
 class NetManager with ChangeNotifier {
   static NetManager _instance;
@@ -40,6 +41,7 @@ class NetManager with ChangeNotifier {
   void onGateMessage(data) {
     //分离消息 触发回调
     _logger.d(data);
+    Global.tts.addPlayQueue(data);
   }
 
   void onGateError(String error) {

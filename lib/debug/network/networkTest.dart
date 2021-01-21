@@ -16,7 +16,7 @@ class networkTest extends StatefulWidget {
 class _networkTestState extends State<networkTest> {
   void initState() {
     super.initState();
-    Global.netMgr.conntectGate("wss://socket.idcd.com:1443");
+    Global.netMgr.conntectGate("ws://20.10.1.87:51002");
   }
 
   void dispose() {

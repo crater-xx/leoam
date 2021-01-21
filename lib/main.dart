@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
               networkTest(title: 'network'),
           '/login': (BuildContext content) => LoginPage(title: 'login'),
         },
-        initialRoute: "/debug/network",
+        initialRoute: "/",
         home: TabsPage(title: tr("MyHomePage_title")),
       ),
     );
