@@ -40,6 +40,6 @@ class Global {
   }
 
   static void timer10Seconds(timer) {
-    locationMgr.checkLocation(5);
+    // locationMgr.checkLocation(5);
   }
 }
