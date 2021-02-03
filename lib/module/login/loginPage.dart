@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -96,8 +97,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void onAuthSuccess(Map<String, dynamic> event) {
+    Global.profile.authSuccess(_unameController.text, _pwdController.text);
+  }
+
   void _onLogin() async {
     //1.将认证信息保存
-    Global.profile.authSuccess(_unameController.text, _pwdController.text);
+
+    var authInfo = Map<String, String>();
+    authInfo["token"] = _pwdController.text;
+    authInfo["uid"] = _unameController.text;
+    Global.netMgr.setMsgCallBack("onAuthSuccess", onAuthSuccess);
+    Global.netMgr.sendMsgToGate(jsonEncode(authInfo));
   }
 }

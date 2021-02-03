@@ -35,7 +35,7 @@ class _TabsPageState extends State<TabsPage> {
   @override
   void initState() {
     super.initState();
-    Global.netMgr.conntectGate("ws://47.116.72.182:51002");
+    Global.netMgr.conntectGate("ws://20.10.1.87:51002");
     // 自动填充上次登录的用户名，填充后将焦点定位到密码输入框
     Global.profile.LoadWeixinAuth();
     Global.tts.initTTS();

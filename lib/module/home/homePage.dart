@@ -37,16 +37,21 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: CurrentLocationState(),
-      ),
-      body: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: BetterPlayer(
-          controller: _betterPlayerController,
+        appBar: AppBar(
+          title: CurrentLocationState(),
         ),
-      ),
-    );
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(
+                controller: _betterPlayerController,
+              ),
+            ),
+            LoginStatus(),
+          ],
+        ));
   }
 }
 
