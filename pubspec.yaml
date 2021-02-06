@@ -39,6 +39,7 @@ dependencies:
   location: ^3.2.1
   logger: ^0.9.4
   better_player: ^0.0.47
+  dash_chat: ^1.1.15
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
@@ -62,6 +63,7 @@ dev_dependencies:
   location: ^3.2.1
   logger: ^0.9.4
   better_player: ^0.0.47
+  dash_chat: ^1.1.15
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

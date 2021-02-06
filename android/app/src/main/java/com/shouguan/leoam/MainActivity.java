@@ -39,6 +39,7 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
+
 public class MainActivity extends FlutterActivity {
     private static final String CHANNEL = "com.shouguan.leoam/sms";
     private static final String EVENT_CHANNEL = "com.shouguan.leoax/onNewSMS";
@@ -62,6 +63,8 @@ public class MainActivity extends FlutterActivity {
                             if (call.method.equals("getAllSms")) {
                                 ArrayList<String> alls = getAllSms();
                                 result.success(alls);
+                            }else if(call.method.equals("initXMLYSdk")){
+
                             }
                         });
         new EventChannel(flutterEngine.getDartExecutor().getBinaryMessenger(),EVENT_CHANNEL)
@@ -116,6 +119,9 @@ public class MainActivity extends FlutterActivity {
         };
     }
 
+    public void initXMLASdk(String appKey,String appSecret,String packId){
+
+    }
 
 
     @SuppressLint("LongLogTag")

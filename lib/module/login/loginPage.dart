@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:leoam/common/global.dart';
 import 'package:leoam/common/UserModel.dart';
 import 'package:provider/provider.dart';
+import 'package:logger/logger.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key, this.title}) : super(key: key);
@@ -22,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   bool pwdShow = false; //密码是否显示明文
   GlobalKey _formKey = new GlobalKey<FormState>();
   bool _nameAutoFocus = true;
+  final Logger _logger = Logger();
 
   @override
   void initState() {
@@ -98,12 +100,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void onAuthSuccess(Map<String, dynamic> event) {
-    Global.profile.authSuccess(_unameController.text, _pwdController.text);
+    if (event["code"] == 0) {
+      Global.profile.authSuccess(_unameController.text, _pwdController.text);
+      //继续登录IM
+      var authInfo = Map<String, String>();
+      authInfo["password"] = _pwdController.text;
+      authInfo["uid"] = _unameController.text;
+      authInfo["fun"] = "auth";
+      Global.netMgr.sengGameMsg(31001, json.encode(authInfo));
+    } else {
+      _logger.w("auth return code: " + event["code"]);
+    }
   }
 
   void _onLogin() async {
     //1.将认证信息保存
-
     var authInfo = Map<String, String>();
     authInfo["token"] = _pwdController.text;
     authInfo["uid"] = _unameController.text;

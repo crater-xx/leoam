@@ -27,6 +27,11 @@ class NetManager with ChangeNotifier {
     _msgHandle[fun] = callback;
   }
 
+  void sengGameMsg(int svrID, String msg) {
+    var cmd = "${svrID}|${msg}";
+    sendMsgToGate(cmd);
+  }
+
   void sendMsgToGate(msg) {
     _websocket.sendMessage(msg);
   }
@@ -46,7 +51,7 @@ class NetManager with ChangeNotifier {
     var msg = data.substring(6);
     var event = json.decode(msg);
     if (event["fun"] != null) {
-      final callback = _msgHandle[event["fun"]];
+      final callback = _msgHandle.remove(event["fun"]);
       if (callback != null) {
         callback(event);
       }
